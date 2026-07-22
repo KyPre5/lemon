@@ -1,24 +1,39 @@
 <script setup lang="ts">
+import { ref } from "vue";
 
 type Achievement = {
   title: string;
+  description: string;
 };
 
 const achievements: Achievement[] = [
   {
-    title: 'Achievement 1',
+    title: 'Almost a Marathon',
+    description: 'Walked more than 25km in one day',
   },
   {
-    title: 'Achievement 2',
+    title: 'Lemon Expert',
+    description: 'Drank more than 10 Lemon Sodas',
   },
   {
-    title: 'Achievement 3',
+    title: 'No Oranges Allowed',
+    description: 'Drank more than 20 Lemon Sodas',
   },
   {
-    title: 'Achievement 4',
+    title: 'A echta Linza',
+    description: 'Explored 100% of Linz',
+  },
+  {
+    title: 'One More Lemon Soda?',
+    description: 'Spent more than 10 hours together in one day',
   }
 ];
 
+const activeIndex = ref<number | null>(0);
+
+const toggleAchievement = (index: number) => {
+  activeIndex.value = activeIndex.value === index ? null : index;
+};
 </script>
 
 <template>
@@ -27,10 +42,18 @@ const achievements: Achievement[] = [
 
     <div class="achievements">
       <div
-          v-for="item in achievements"
-          class="achievement">
-        <img class="checked" src="/trophy.png" alt="trophy">
-        <h4>{{ item.title }}</h4>
+          v-for="(item, index) in achievements"
+          :key="item.title"
+          class="achievement-card"
+      >
+        <div class="achievement" @click="toggleAchievement(index)">
+          <img class="checked" src="/trophy.png" alt="trophy">
+          <h4>{{ item.title }}</h4>
+        </div>
+
+        <p v-if="activeIndex === index" class="description">
+          {{ item.description }}
+        </p>
       </div>
     </div>
   </div>
@@ -58,12 +81,18 @@ const achievements: Achievement[] = [
   border-radius: 0 1rem;
 }
 
-.achievement:hover{
-  outline: 0.15rem solid var(--vt-c-text-dark-2);
-}
 
 .checked {
   width: 3rem;
   height: 3rem;
+}
+
+.achievement-card {
+  outline: #f7d070 0.12rem solid;
+  border-radius: 0 1rem;
+}
+
+.description {
+  padding: 0.4rem;
 }
 </style>
