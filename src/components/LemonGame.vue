@@ -16,10 +16,10 @@ type FallingIngredient = Ingredient & {
 };
 
 const availableIngredients: Ingredient[] = [
-  { name: "sugar", image: "/sugar-cube.png", points: -10, caught: 0 },
-  { name: "orange", image: "/orange.png", points: -20, caught: 0 },
-  { name: "ice-cube", image: "/ice-cube.png", points: 5, caught: 0 },
-  { name: "lemon", image: "/lemon.png", points: 10, caught: 0 },
+  { name: "sugar", image: "sugar-cube.png", points: -10, caught: 0 },
+  { name: "orange", image: "orange.png", points: -20, caught: 0 },
+  { name: "ice-cube", image: "ice-cube.png", points: 5, caught: 0 },
+  { name: "lemon", image: "lemon.png", points: 10, caught: 0 },
 ];
 
 const fallingItems = ref<FallingIngredient[]>([]);
@@ -28,14 +28,22 @@ const maxHealth: number = 3;
 const currentHealth = ref<number>(0);
 const isGameStarted = ref<boolean>(false);
 
-let spawnInterval: number | null = null;
+let spawnTimeoutId: number | null = null;
 let animationFrameId: number | null = null;
+let difficultyIntervalId: number | null = null;
 let itemIdCounter: number = 0;
 
+const currentSpawnDelay = ref<number>(1500);
+const speedMultiplier = ref<number>(1.0);
+
 const stopGameLoop = () => {
-  if (spawnInterval) {
-    clearInterval(spawnInterval);
-    spawnInterval = null;
+  if (spawnTimeoutId) {
+    clearTimeout(spawnTimeoutId);
+    spawnTimeoutId = null;
+  }
+  if (difficultyIntervalId) {
+    clearInterval(difficultyIntervalId);
+    difficultyIntervalId = null;
   }
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
@@ -43,16 +51,25 @@ const stopGameLoop = () => {
   }
 };
 
+const scheduleNextSpawn = () => {
+  if (!isGameStarted.value) return;
+
+  spawnItem();
+  spawnTimeoutId = window.setTimeout(scheduleNextSpawn, currentSpawnDelay.value);
+};
+
 const spawnItem = () => {
   const randomIndex = Math.floor(Math.random() * availableIngredients.length);
   const randomIngredient = availableIngredients[randomIndex];
+
+  const baseSpeed = 1 + Math.random() * 0.3;
 
   fallingItems.value.push({
     ...randomIngredient,
     id: itemIdCounter++,
     x: Math.random() * 80,
     y: -50,
-    speed: 1 + Math.random() * 0.3,
+    speed: baseSpeed * speedMultiplier.value,
   });
 };
 
@@ -85,16 +102,26 @@ const updateGame = () => {
   }
 };
 
+const increaseDifficulty = () => {
+  speedMultiplier.value *= 1.15;
+
+  currentSpawnDelay.value = Math.max(300, currentSpawnDelay.value - 150);
+};
+
 const startGame = () => {
   currentHealth.value = maxHealth;
   totalPoints.value = 0;
   fallingItems.value = [];
   availableIngredients.forEach((item) => (item.caught = 0));
 
+  currentSpawnDelay.value = 1500;
+  speedMultiplier.value = 1.0;
+
   isGameStarted.value = true;
   stopGameLoop();
 
-  spawnInterval = window.setInterval(spawnItem, 1500);
+  scheduleNextSpawn();
+  difficultyIntervalId = window.setInterval(increaseDifficulty, 5000);
   animationFrameId = requestAnimationFrame(updateGame);
 };
 
@@ -122,7 +149,7 @@ onUnmounted(() => {
     <div class="header">
       <h1>Points: {{ totalPoints }}</h1>
       <div class="health-bar">
-        <img v-for="i in maxHealth" :key="i" :src="(i <= currentHealth ? '/red-heart.png' : '/grey-heart.png')" alt="health-indicator">
+        <img v-for="i in maxHealth" :key="i" :src="(i <= currentHealth ? 'red-heart.png' : 'grey-heart.png')" alt="health-indicator">
       </div>
     </div>
 

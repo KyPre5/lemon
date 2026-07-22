@@ -48,6 +48,10 @@ const reviews: Review[] = [
 
 const maxScore: number = 5;
 
+const getStarIcon = (score: number, index: number) => {
+  const fileName = index <= score ? 'yellow-star.png' : 'grey-star.png';
+  return `${import.meta.env.BASE_URL}${fileName}`;
+};
 </script>
 
 <template>
@@ -70,7 +74,7 @@ const maxScore: number = 5;
             v-for="i in maxScore"
             :key="i"
             class="player-head"
-            :src="i <= review.score ? '/yellow-star.png' : '/grey-star.png'"
+            :src="getStarIcon(review.score, i)"
             alt="player-head-score"
         />
       </div>

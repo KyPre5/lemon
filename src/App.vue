@@ -18,7 +18,7 @@ const items: NavigationItem[] = [
   { title: "Lemon Game", component: LemonGame, icon: Gamepad },
 ];
 
-const activeIndex = ref<number>(2);
+const activeIndex = ref<number>(0);
 const buttonRefs = ref<HTMLButtonElement[]>([]);
 
 const boxStyle = ref({
@@ -84,7 +84,7 @@ onMounted(() => {
   padding: 1.4rem 1.6rem;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;
