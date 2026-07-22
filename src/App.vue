@@ -18,7 +18,7 @@ const items: NavigationItem[] = [
   { title: "Lemon Game", component: LemonGame, icon: Gamepad },
 ];
 
-const activeIndex = ref<number>(0);
+const activeIndex = ref<number>(2);
 const buttonRefs = ref<HTMLButtonElement[]>([]);
 
 const boxStyle = ref({

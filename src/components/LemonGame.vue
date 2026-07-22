@@ -17,8 +17,9 @@ type FallingIngredient = Ingredient & {
 
 const availableIngredients: Ingredient[] = [
   { name: "sugar", image: "/sugar-cube.png", points: -10, caught: 0 },
+  { name: "orange", image: "/orange.png", points: -20, caught: 0 },
   { name: "ice-cube", image: "/ice-cube.png", points: 5, caught: 0 },
-  { name: "lemon", image: "/lemon.png", points: 10, caught: 0 }
+  { name: "lemon", image: "/lemon.png", points: 10, caught: 0 },
 ];
 
 const fallingItems = ref<FallingIngredient[]>([]);
@@ -128,6 +129,19 @@ onUnmounted(() => {
     <div class="game-container">
       <div v-if="!isGameStarted" class="game-overlay">
         <button class="start-btn" @click="startGame">Start Game</button>
+
+        <div class="help">
+          <div class="rule">
+            <h5>Collect:</h5>
+            <span class="entry"><img class="icon" :src="availableIngredients[2].image" :alt="availableIngredients[2].name"> Ice-Cube</span>
+            <span class="entry"><img class="icon" :src="availableIngredients[3].image" :alt="availableIngredients[3].name"> Lemon</span>
+          </div>
+          <div class="rule">
+            <h5>Don't Collect:</h5>
+            <span class="entry"><img class="icon" :src="availableIngredients[0].image" :alt="availableIngredients[0].name"> Sugar</span>
+            <span class="entry"><img class="icon" :src="availableIngredients[1].image" :alt="availableIngredients[1].name"> Orange</span>
+          </div>
+        </div>
       </div>
 
       <div
@@ -145,7 +159,7 @@ onUnmounted(() => {
     </div>
 
     <div class="stats-container">
-      <span class="stat" v-for="item in availableIngredients"><img class="icon" :src="item.image" :alt="item.name">: {{ item.caught }}</span>
+      <span class="stat" v-for="item in availableIngredients"><img class="icon" :src="item.image" :alt="item.name">{{ item.caught }}</span>
     </div>
   </div>
 </template>
@@ -192,13 +206,14 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 3rem;
 
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
 }
 
 .start-btn {
+  margin-top: 5rem;
   padding: 0.8rem 1.6rem;
   font-size: 1.2rem;
   font-weight: bold;
@@ -216,8 +231,8 @@ onUnmounted(() => {
 
 .falling-item {
   position: absolute;
-  width: 4.2rem;
-  height: 4.2rem;
+  width: 4rem;
+  height: 4rem;
   pointer-events: auto;
   cursor: pointer;
   user-select: none;
@@ -235,7 +250,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 1rem;
+  padding: 0 0.2rem;
   margin-top: 0.4rem;
 }
 
@@ -261,5 +276,32 @@ onUnmounted(() => {
 .health-bar img {
   width: 3.2rem;
   height: 3.2rem;
+}
+
+.help {
+  display: flex;
+  flex-direction: row;
+  padding: 0.4rem;
+  gap: 1rem;
+}
+
+.rule {
+  font-size: 1.2rem;
+  padding: 0.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rule img {
+  width: 3.2rem;
+  height: 3.2rem;
+}
+
+.entry {
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 </style>
